@@ -1,0 +1,27 @@
+{
+  "name": "rework-pure-grids",
+  "version": "0.0.0",
+  "description": "Generate custom units for Pure Grids via Rework",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/ericf/rework-pure-grids.git"
+  },
+  "keywords": [
+    "pure",
+    "css",
+    "grids",
+    "rework"
+  ],
+  "author": "Eric Ferraiuolo <eferraiuolo@gmail.com>",
+  "license": "BSD",
+  "bugs": {
+    "url": "https://github.com/ericf/rework-pure-grids/issues"
+  },
+  "peerDependencies": {
+    "rework": "~0.18.3"
+  }
+}
