@@ -17,48 +17,48 @@ var OLD_IE_WIDTH_DELTA = -0.00031;
 // AST of declarations of Pure's `.pure-u` styles that get applied to all of the
 // generated grid units.
 var UNIT_DECLARATIONS  = [
-        {
-            type    : 'declaration',
-            property: 'display',
-            value   : 'inline-block'
-        },
+    {
+        type    : 'declaration',
+        property: 'display',
+        value   : 'inline-block'
+    },
 
-        {
-            type    : 'declaration',
-            property: '*display',
-            value   : 'inline'
-        },
+    {
+        type    : 'declaration',
+        property: '*display',
+        value   : 'inline'
+    },
 
-        {
-            type    : 'declaration',
-            property: 'zoom',
-            value   : '1'
-        },
+    {
+        type    : 'declaration',
+        property: 'zoom',
+        value   : '1'
+    },
 
-        {
-            type    : 'declaration',
-            property: 'letter-spacing',
-            value   : 'normal'
-        },
+    {
+        type    : 'declaration',
+        property: 'letter-spacing',
+        value   : 'normal'
+    },
 
-        {
-            type    : 'declaration',
-            property: 'word-spacing',
-            value   : 'normal'
-        },
+    {
+        type    : 'declaration',
+        property: 'word-spacing',
+        value   : 'normal'
+    },
 
-        {
-            type    : 'declaration',
-            property: 'vertical-align',
-            value   : 'top'
-        },
+    {
+        type    : 'declaration',
+        property: 'vertical-align',
+        value   : 'top'
+    },
 
-        {
-            type    : 'declaration',
-            property: 'text-rendering',
-            value   : 'auto'
-        }
-    ];
+    {
+        type    : 'declaration',
+        property: 'text-rendering',
+        value   : 'auto'
+    }
+];
 
 function getUnitSelector(numerator, denominator) {
     if (denominator === 1) {
@@ -100,6 +100,8 @@ function pureGridUnits(numUnits, options) {
                 value   : toPercentage(width)
             }];
 
+            // Adds an additional selector for the reduced fraction if there is
+            // one and the `includeReducedFractions` option is truthy.
             if (includeReducedFractions) {
                 reduced = getReduced(current, numUnits);
 
@@ -110,6 +112,8 @@ function pureGridUnits(numUnits, options) {
                 }
             }
 
+            // Adds an additonal `*width` declaration for IE < 8 if the current
+            // unit < 100% width and the `includeOldIEWidths` option is truthy.
             if (includeOldIEWidths && width < 1) {
                 // Updates the width value for the `*width` property to ensure
                 // IE < 8's rounding issues don't break the grid.
