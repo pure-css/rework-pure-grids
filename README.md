@@ -8,6 +8,25 @@ Generate custom units for [Pure][] Grids via [Rework][].
 [Rework]: https://github.com/visionmedia/rework
 
 
+Usage
+-----
+
+Install Rework and this Rework plugin from npm:
+
+```shell
+$ npm i rework rework-pure-grids
+```
+
+Create a customized set units for Pure Grids:
+
+```js
+var rework    = require('rework'),
+    pureGrids = require('rework-pure-grids');
+
+var css = rework('').use(pureGrids.units(10)).toString();
+```
+
+
 License
 -------
 
