@@ -16,7 +16,7 @@ var OLD_IE_WIDTH_DELTA = -0.00031;
 
 // AST of declarations of Pure's `.pure-u` styles that get applied to all of the
 // generated grid units.
-var UNIT_DECLARATIONS  = [
+var PURE_GRID_UNIT_DECLARATIONS  = [
     {
         type    : 'declaration',
         property: 'display',
@@ -77,7 +77,7 @@ function getSelectorFraction(selector) {
     ];
 }
 
-function sortSelectors(a, b) {
+function compareSelectors(a, b) {
     var aFrac = getSelectorFraction(a),
         bFrac = getSelectorFraction(b);
 
@@ -110,11 +110,11 @@ function pureGridUnits(units, options) {
             selectors = {};
 
         function generateUnitRules(numUnits) {
-            var current = 1,
+            var numerator = 1,
                 rule, selector, width, reduced;
 
-            while (current <= numUnits) {
-                width = current / numUnits;
+            while (numerator <= numUnits) {
+                width = numerator / numUnits;
                 rule  = rules[width];
 
                 if (!rule) {
@@ -132,7 +132,7 @@ function pureGridUnits(units, options) {
                     };
 
                     // Adds an additonal `*width` declaration for IE < 8 if the
-                    // current unit < 100% width and the `includeOldIEWidths`
+                    // numerator unit < 100% width and the `includeOldIEWidths`
                     // option is truthy.
                     if (options.includeOldIEWidths && width < 1) {
                         // Updates the width value for the `*width` property to
@@ -148,17 +148,17 @@ function pureGridUnits(units, options) {
                 }
 
                 // Create and store the selectors, in de-dupped format.
-                selector = getSelector(current, numUnits);
+                selector = getSelector(numerator, numUnits);
                 rule.selectors[selector] = selectors[selector] = true;
 
                 // Adds an additional selector for the reduced fraction if there
                 // is one and the `includeReducedFractions` option is truthy.
                 if (options.includeReducedFractions) {
-                    reduced = getReduced(current, numUnits);
+                    reduced = getReduced(numerator, numUnits);
 
                     // Makes sure the faction has been reduced before adding
                     // another selector for the current grid unit.
-                    if (reduced[0] !== current && reduced[1] !== numUnits) {
+                    if (reduced[0] !== numerator && reduced[1] !== numUnits) {
                         // Create and store the selectors, in de-dupped format.
                         selector = getSelector(reduced[0], reduced[1]);
                         rule.selectors[selector] = selectors[selector] = true;
@@ -166,7 +166,7 @@ function pureGridUnits(units, options) {
                 }
 
                 // Update numerator and process the next grid unit.
-                current += 1;
+                numerator += 1;
             }
         }
 
@@ -179,8 +179,8 @@ function pureGridUnits(units, options) {
         // are first sorted.
         style.rules.push({
             type        : 'rule',
-            selectors   : Object.keys(selectors).sort(sortSelectors),
-            declarations: UNIT_DECLARATIONS
+            selectors   : Object.keys(selectors).sort(compareSelectors),
+            declarations: PURE_GRID_UNIT_DECLARATIONS
         });
 
         // Adds all of the grid unit `width` rules to the CSS, and sorts each
@@ -188,7 +188,7 @@ function pureGridUnits(units, options) {
         Object.keys(rules).sort().forEach(function (width) {
             var rule = rules[width];
 
-            rule.selectors = Object.keys(rule.selectors).sort(sortSelectors);
+            rule.selectors = Object.keys(rule.selectors).sort(compareSelectors);
             style.rules.push(rule);
         });
     };
