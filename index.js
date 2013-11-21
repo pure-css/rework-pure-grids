@@ -60,7 +60,7 @@ var UNIT_DECLARATIONS  = [
     }
 ];
 
-function getUnitSelector(numerator, denominator) {
+function getSelector(numerator, denominator) {
     if (denominator === 1) {
         return '.pure-u-1';
     }
@@ -68,16 +68,37 @@ function getUnitSelector(numerator, denominator) {
     return '.pure-u-' + numerator + '-' + denominator;
 }
 
-function pureGridUnits(numUnits, options) {
-    options || (options = {});
+function getSelectorFraction(selector) {
+    var captures = selector.match(/^\.pure-u-(\d+)(?:-(\d+))?$/);
 
-    // Include `*width` values for IE < 8 by default.
-    var includeOldIEWidths = 'includeOldIEWidths' in options ?
-            !!options.includeOldIEWidths : true;
+    return [
+        parseInt(captures[1], 10),
+        parseInt(captures[2], 10) || 1
+    ];
+}
 
-    // Include reduced fractions by default; e.g., 2/4 and 1/2.
-    var includeReducedFractions = 'includeReducedFractions' in options ?
-            !!options.includeReducedFractions : true;
+function sortSelectors(a, b) {
+    var aFrac = getSelectorFraction(a),
+        bFrac = getSelectorFraction(b);
+
+    // Sort by denominator first.
+    if (aFrac[1] < bFrac[1]) { return -1; }
+    if (aFrac[1] > bFrac[1]) { return 1; }
+
+    // When the denominators are the same, sort by the numerator.
+    if (aFrac[0] < bFrac[0]) { return -1; }
+    if (aFrac[0] > bFrac[0]) { return 1; }
+
+    return 0;
+}
+
+function pureGridUnits(units, options) {
+    Array.isArray(units) || (units = [units]);
+
+    options = extend({
+        includeOldIEWidths     : true,
+        includeReducedFractions: true
+    }, options);
 
     function toPercentage(num) {
         num *= 100;
@@ -85,77 +106,107 @@ function pureGridUnits(numUnits, options) {
     }
 
     return function (style) {
-        var unitRules     = [],
-            unitSelectors = [],
-            current       = 1,
-            selectors, declarations, width, reduced;
+        var rules     = {},
+            selectors = {};
 
-        while (current <= numUnits) {
-            selectors = [getUnitSelector(current, numUnits)];
-            width     = current / numUnits;
+        function generateUnitRules(numUnits) {
+            var current = 1,
+                rule, selector, width, reduced;
 
-            declarations = [{
-                type    : 'declaration',
-                property: 'width',
-                value   : toPercentage(width)
-            }];
+            while (current <= numUnits) {
+                width = current / numUnits;
+                rule  = rules[width];
 
-            // Adds an additional selector for the reduced fraction if there is
-            // one and the `includeReducedFractions` option is truthy.
-            if (includeReducedFractions) {
-                reduced = getReduced(current, numUnits);
+                if (!rule) {
+                    // The rule's `selectors` are stored as an object for
+                    // de-dupping.
+                    rule = rules[width] = {
+                        type        : 'rule',
+                        selectors   : {},
 
-                // Makes sure the faction has been reduced before adding another
-                // selector for the current grid unit.
-                if (reduced[0] !== current && reduced[1] !== numUnits) {
-                    selectors.push(getUnitSelector(reduced[0], reduced[1]));
+                        declarations: [{
+                            type    : 'declaration',
+                            property: 'width',
+                            value   : toPercentage(width)
+                        }]
+                    };
+
+                    // Adds an additonal `*width` declaration for IE < 8 if the
+                    // current unit < 100% width and the `includeOldIEWidths`
+                    // option is truthy.
+                    if (options.includeOldIEWidths && width < 1) {
+                        // Updates the width value for the `*width` property to
+                        // ensure IE < 8's rounding issues don't break the grid.
+                        width += OLD_IE_WIDTH_DELTA;
+
+                        rule.declarations.push({
+                            type    : 'declaration',
+                            property: '*width',
+                            value   : toPercentage(width)
+                        });
+                    }
                 }
+
+                // Create and store the selectors, in de-dupped format.
+                selector = getSelector(current, numUnits);
+                rule.selectors[selector] = selectors[selector] = true;
+
+                // Adds an additional selector for the reduced fraction if there
+                // is one and the `includeReducedFractions` option is truthy.
+                if (options.includeReducedFractions) {
+                    reduced = getReduced(current, numUnits);
+
+                    // Makes sure the faction has been reduced before adding
+                    // another selector for the current grid unit.
+                    if (reduced[0] !== current && reduced[1] !== numUnits) {
+                        // Create and store the selectors, in de-dupped format.
+                        selector = getSelector(reduced[0], reduced[1]);
+                        rule.selectors[selector] = selectors[selector] = true;
+                    }
+                }
+
+                // Update numerator and process the next grid unit.
+                current += 1;
             }
-
-            // Adds an additonal `*width` declaration for IE < 8 if the current
-            // unit < 100% width and the `includeOldIEWidths` option is truthy.
-            if (includeOldIEWidths && width < 1) {
-                // Updates the width value for the `*width` property to ensure
-                // IE < 8's rounding issues don't break the grid.
-                width += OLD_IE_WIDTH_DELTA;
-
-                declarations.push({
-                    type    : 'declaration',
-                    property: '*width',
-                    value   : toPercentage(width)
-                });
-            }
-
-            // Stores rule for the current grid unit's `width` declarations
-            // which will be later added to the CSS.
-            unitRules.push({
-                type        : 'rule',
-                selectors   : selectors,
-                declarations: declarations
-            });
-
-            // Stores selectors for the current grid unit which later will all
-            // be combined with the `.pure-u` declarations and added to the CSS.
-            unitSelectors.push.apply(unitSelectors, selectors);
-
-            // Update numerator and process the next grid unit.
-            current += 1;
         }
 
+        // Takes the array of `units` and creates unique declarations and
+        // selectors for each set.
+        units.forEach(generateUnitRules);
+
         // Adds rule that applies the `.pure-u` declarations to all of the grid
-        // unit that were created in the process above.
+        // unit that were created in the process above. The de-dupped selectors
+        // are first sorted.
         style.rules.push({
             type        : 'rule',
-            selectors   : unitSelectors,
+            selectors   : Object.keys(selectors).sort(sortSelectors),
             declarations: UNIT_DECLARATIONS
         });
 
-        // Adds all of the grid unit `width` rules to the CSS.
-        style.rules.push.apply(style.rules, unitRules);
+        // Adds all of the grid unit `width` rules to the CSS, and sorts each
+        // rule's selectors before adding them to `style`.
+        Object.keys(rules).sort().forEach(function (width) {
+            var rule = rules[width];
+
+            rule.selectors = Object.keys(rule.selectors).sort(sortSelectors);
+            style.rules.push(rule);
+        });
     };
 }
 
 // -- Utilities ----------------------------------------------------------------
+
+function extend(obj) {
+    Array.prototype.slice.call(arguments, 1).forEach(function (source) {
+        if (!source) { return; }
+
+        Object.keys(source).forEach(function (name) {
+            obj[name] = source[name];
+        });
+    });
+
+    return obj;
+}
 
 function getGCD(a, b) {
     return b ? getGCD(b, a % b) : a;
