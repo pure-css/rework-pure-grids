@@ -95,14 +95,17 @@ function compareSelectors(a, b) {
 function pureGridUnits(units, options) {
     Array.isArray(units) || (units = [units]);
 
+    // Apply defaults to any non-specified `options`.
     options = extend({
+        decimals: 4,
+
         includeOldIEWidths     : true,
         includeReducedFractions: true
     }, options);
 
     function toPercentage(num) {
         num *= 100;
-        return num.toFixed(num % 1 === 0 ? 0 : options.decimals || 4) + '%';
+        return num.toFixed(num % 1 === 0 ? 0 : options.decimals) + '%';
     }
 
     return function (style) {
