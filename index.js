@@ -61,7 +61,13 @@ var PURE_GRID_UNIT_DECLARATIONS  = [
 ];
 
 function getSelector(numerator, denominator) {
-    return '.pure-u-' + numerator + '-' + denominator;
+    var selector = '.pure-u-' + numerator;
+
+    if (denominator) {
+        selector += '-' + denominator;
+    }
+
+    return selector;
 }
 
 function getSelectorFraction(selector) {
@@ -166,10 +172,10 @@ function pureGridUnits(units, options) {
                         // Create and store the selectors, in de-dupped format.
                         includeSelector(getSelector(reduced[0], reduced[1]));
 
-                        // Adds an additional, denominator-less selector for,
-                        // the full-width unit.
+                        // Adds an additional, denominator-less selector for
+                        // fractions whose denominator is `1`.
                         if (options.includeWholeNumbers && reduced[1] === 1) {
-                            includeSelector('.pure-u-1');
+                            includeSelector(getSelector(reduced[0]));
                         }
                     }
                 }
