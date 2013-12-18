@@ -1,6 +1,6 @@
 var rework = require('rework');
 var fs = require('fs');
-var pureGrids = require('./');
+var pureGrids = require('../../');
 var gridCss = rework('').use(pureGrids.units(12))
                         .use(pureGrids.mediaQueries([
                             {
