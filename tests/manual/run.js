@@ -5,15 +5,15 @@ var gridCss = rework('').use(pureGrids.units(12))
                         .use(pureGrids.mediaQueries([
                             {
                                 minWidth: '480px',
-                                gridName: 'med'
+                                gridName: 't'
                             },
                             {
                                 minWidth: '980px',
-                                gridName: 'lrg'
+                                gridName: 'd'
                             },
                             {
                                 minWidth: '1200px',
-                                gridName: 'xlrg'
+                                gridName: 'l'
                             }
                         ])).toString();
 
