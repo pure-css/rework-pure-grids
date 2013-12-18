@@ -5,8 +5,7 @@
  */
 
 'use strict';
-
-exports.units = pureGridUnits;
+var utilities = require('./utilities');
 
 // -----------------------------------------------------------------------------
 
@@ -60,20 +59,24 @@ var PURE_GRID_UNIT_DECLARATIONS  = [
     }
 ];
 
-function getSelector(numerator, denominator) {
+function getSelector(name, numerator, denominator) {
     if (denominator === 1) {
-        return '.pure-u-1';
+        return '.pure-' + name + '-1';
     }
 
-    return '.pure-u-' + numerator + '-' + denominator;
+    return '.pure-' + name + '-' + numerator + '-' + denominator;
 }
-
+//TODO: selector.match(/(\d+)(?:-(\d+))?$/)
 function getSelectorFraction(selector) {
-    var captures = selector.match(/^\.pure-u-(\d+)(?:-(\d+))?$/);
+    var re1='.*?';  // Non-greedy match on filler
+    var re2='(\\d+)'; // Integer Number 1
+    var re3='.*?';    // Non-greedy match on filler
+    var captures = selector.match(re1+re2+re3,["i"]);
+    var remaining = selector.replace(captures[0], '').replace('-', '');
 
     return [
         parseInt(captures[1], 10),
-        parseInt(captures[2], 10) || 1
+        parseInt(remaining, 10) || 1
     ];
 }
 
@@ -96,9 +99,9 @@ function pureGridUnits(units, options) {
     Array.isArray(units) || (units = [units]);
 
     // Apply defaults to any non-specified `options`.
-    options = extend({
+    options = utilities.extend({
         decimals: 4,
-
+        gridName: 'u',
         includeOldIEWidths     : true,
         includeReducedFractions: true
     }, options);
@@ -151,19 +154,20 @@ function pureGridUnits(units, options) {
                 }
 
                 // Create and store the selectors, in de-dupped format.
-                selector = getSelector(numerator, numUnits);
+                selector = getSelector(options.gridName, numerator, numUnits);
+
                 rule.selectors[selector] = selectors[selector] = true;
 
                 // Adds an additional selector for the reduced fraction if there
                 // is one and the `includeReducedFractions` option is truthy.
                 if (options.includeReducedFractions) {
-                    reduced = getReduced(numerator, numUnits);
+                    reduced = utilities.getReduced(numerator, numUnits);
 
                     // Makes sure the faction has been reduced before adding
                     // another selector for the current grid unit.
                     if (reduced[0] !== numerator && reduced[1] !== numUnits) {
                         // Create and store the selectors, in de-dupped format.
-                        selector = getSelector(reduced[0], reduced[1]);
+                        selector = getSelector(options.gridName, reduced[0], reduced[1]);
                         rule.selectors[selector] = selectors[selector] = true;
                     }
                 }
@@ -197,25 +201,6 @@ function pureGridUnits(units, options) {
     };
 }
 
-// -- Utilities ----------------------------------------------------------------
 
-function extend(obj) {
-    Array.prototype.slice.call(arguments, 1).forEach(function (source) {
-        if (!source) { return; }
-
-        Object.keys(source).forEach(function (name) {
-            obj[name] = source[name];
-        });
-    });
-
-    return obj;
-}
-
-function getGCD(a, b) {
-    return b ? getGCD(b, a % b) : a;
-}
-
-function getReduced(numerator, denominator) {
-    var gcd = getGCD(numerator, denominator);
-    return [numerator / gcd, denominator / gcd];
-}
+exports.units = pureGridUnits;
+exports.mediaQueries = require('./media-queries');
