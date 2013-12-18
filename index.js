@@ -59,12 +59,15 @@ var PURE_GRID_UNIT_DECLARATIONS  = [
     }
 ];
 
-function getSelector(name, numerator, denominator) {
-    if (denominator === 1) {
-        return '.pure-' + name + '-1';
+
+function getSelector(numerator, denominator) {
+    var selector = '.pure-u-' + numerator;
+
+    if (denominator) {
+        selector += '-' + denominator;
     }
 
-    return '.pure-' + name + '-' + numerator + '-' + denominator;
+    return selector;
 }
 //TODO: selector.match(/(\d+)(?:-(\d+))?$/)
 function getSelectorFraction(selector) {
@@ -76,7 +79,7 @@ function getSelectorFraction(selector) {
 
     return [
         parseInt(captures[1], 10),
-        parseInt(remaining, 10) || 1
+        parseInt(captures[2], 10) || 0
     ];
 }
 
@@ -103,7 +106,8 @@ function pureGridUnits(units, options) {
         decimals: 4,
         gridName: 'u',
         includeOldIEWidths     : true,
-        includeReducedFractions: true
+        includeReducedFractions: true,
+        includeWholeNumbers    : true
     }, options);
 
     function toPercentage(num) {
@@ -117,7 +121,12 @@ function pureGridUnits(units, options) {
 
         function generateUnitRules(numUnits) {
             var numerator = 1,
-                rule, selector, width, reduced;
+                rule, width, reduced;
+
+            function includeSelector(selector) {
+                selectors[selector]      = true;
+                rule.selectors[selector] = true;
+            }
 
             while (numerator <= numUnits) {
                 width = numerator / numUnits;
@@ -154,9 +163,7 @@ function pureGridUnits(units, options) {
                 }
 
                 // Create and store the selectors, in de-dupped format.
-                selector = getSelector(options.gridName, numerator, numUnits);
-
-                rule.selectors[selector] = selectors[selector] = true;
+                includeSelector(getSelector(numerator, numUnits));
 
                 // Adds an additional selector for the reduced fraction if there
                 // is one and the `includeReducedFractions` option is truthy.
@@ -167,8 +174,13 @@ function pureGridUnits(units, options) {
                     // another selector for the current grid unit.
                     if (reduced[0] !== numerator && reduced[1] !== numUnits) {
                         // Create and store the selectors, in de-dupped format.
-                        selector = getSelector(options.gridName, reduced[0], reduced[1]);
-                        rule.selectors[selector] = selectors[selector] = true;
+                        includeSelector(getSelector(reduced[0], reduced[1]));
+
+                        // Adds an additional, denominator-less selector for
+                        // fractions whose denominator is `1`.
+                        if (options.includeWholeNumbers && reduced[1] === 1) {
+                            includeSelector(getSelector(reduced[0]));
+                        }
                     }
                 }
 
