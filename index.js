@@ -60,8 +60,8 @@ var PURE_GRID_UNIT_DECLARATIONS  = [
 ];
 
 
-function getSelector(numerator, denominator) {
-    var selector = '.pure-u-' + numerator;
+function getSelector(gridName, numerator, denominator) {
+    var selector = '.pure-' + gridName + '-' + numerator;
 
     if (denominator) {
         selector += '-' + denominator;
@@ -163,7 +163,7 @@ function pureGridUnits(units, options) {
                 }
 
                 // Create and store the selectors, in de-dupped format.
-                includeSelector(getSelector(numerator, numUnits));
+                includeSelector(getSelector(options.gridName, numerator, numUnits));
 
                 // Adds an additional selector for the reduced fraction if there
                 // is one and the `includeReducedFractions` option is truthy.
@@ -174,12 +174,12 @@ function pureGridUnits(units, options) {
                     // another selector for the current grid unit.
                     if (reduced[0] !== numerator && reduced[1] !== numUnits) {
                         // Create and store the selectors, in de-dupped format.
-                        includeSelector(getSelector(reduced[0], reduced[1]));
+                        includeSelector(getSelector(options.gridName, reduced[0], reduced[1]));
 
                         // Adds an additional, denominator-less selector for
                         // fractions whose denominator is `1`.
                         if (options.includeWholeNumbers && reduced[1] === 1) {
-                            includeSelector(getSelector(reduced[0]));
+                            includeSelector(getSelector(options.gridName, reduced[0]));
                         }
                     }
                 }
