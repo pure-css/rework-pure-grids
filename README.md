@@ -23,7 +23,28 @@ Create a customized set units for Pure Grids:
 var rework    = require('rework'),
     pureGrids = require('rework-pure-grids');
 
-var css = rework('').use(pureGrids.units(10)).toString();
+var css = rework('')
+        .use(pureGrids.units(12))
+        .use(pureGrids.mediaQueries(12, {
+            small: 'screen and (min-width: 0em)',
+            med  : 'screen and (min-width: 48em)',
+            large: 'screen and (min-width: 60em)'
+        }))
+        .toString();
+```
+
+Now use the new selectors in HTML:
+
+```html
+<div class="pure-g">
+    <div id="main" class="pure-u-small-1 pure-u-med-3-4 pure-u-large-1-2">
+        <h1>Main Content</h1>
+    </div>
+
+    <div id="side" class="pure-u-small-1 pure-u-med-1-4 pure-u-large-1-2">
+        <h1>Main Content</h1>
+    </div>
+</div>
 ```
 
 
