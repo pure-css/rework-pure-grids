@@ -26,23 +26,29 @@ var rework    = require('rework'),
 var css = rework('')
         .use(pureGrids.units(12))
         .use(pureGrids.mediaQueries(12, {
-            small: 'screen and (min-width: 0em)',
-            med  : 'screen and (min-width: 48em)',
-            large: 'screen and (min-width: 60em)'
+            med  : 'screen and (min-width: 24em)',
+            lrg  : 'screen and (min-width: 48em)',
+            xlrg : 'screen and (min-width: 60em)'
         }))
         .toString();
 ```
 
-Now use the new selectors in HTML:
+Now use the new selectors in HTML whenever you want an element's width to change at a certain media query.
 
 ```html
 <div class="pure-g">
-    <div id="main" class="pure-u-small-1 pure-u-med-3-4 pure-u-large-1-2">
+    <!-- This content will have the following widths:
+        100% on phones, 50% at 24em, 25% at 48em, and 12.5% at 60em and up
+    -->
+    <div id="main" class="pure-u-1 pure-u-med-1-2 pure-u-lrg-1-4 pure-u-xlrg-1-8">
         <h1>Main Content</h1>
     </div>
 
-    <div id="side" class="pure-u-small-1 pure-u-med-1-4 pure-u-large-1-2">
-        <h1>Main Content</h1>
+    <!-- This content will have the following widths:
+        100% on phones, 25% at 24em and up.
+    -->
+    <div id="side" class="pure-u-1 pure-u-med-1-4">
+        <h1>Side Content</h1>
     </div>
 </div>
 ```
