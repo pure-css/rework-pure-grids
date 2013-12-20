@@ -6,7 +6,7 @@
 
 'use strict';
 
-module.exports = pureGrids;
+exports.units = pureGridsUnits;
 
 // -----------------------------------------------------------------------------
 
@@ -60,7 +60,7 @@ var PURE_GRID_UNIT_DECLARATIONS  = [
     }
 ];
 
-function pureGrids(units, options) {
+function pureGridsUnits(units, options) {
     Array.isArray(units) || (units = [units]);
 
     // Apply defaults to any non-specified `options`.
