@@ -23,7 +23,29 @@ Create a customized set units for Pure Grids:
 var rework    = require('rework'),
     pureGrids = require('rework-pure-grids');
 
-var css = rework('').use(pureGrids.units(10)).toString();
+var css = rework('').use(pureGrids.units(12, {
+    mediaQueries: {
+        sm  : 'screen and (min-width: 30em)',
+        med : 'screen and (min-width: 48em)',
+        lrg : 'screen and (min-width: 64em)',
+        xlrg: 'screen and (min-width: 75em)'
+    }
+})).toString();
+```
+
+The new classnames can be added to HTML elements whenever their width shoudl
+change at the break-points specified in the `mediaQueries` option above.
+
+```html
+<div class="pure-g">
+    <div id="main" class="pure-u-1 pure-u-med-3-4 pure-u-xlrg-2-3">
+        <h1>Main Content</h1>
+    </div>
+
+    <div id="side" class="pure-u-1 pure-u-med-1-4 pure-u-xlrg-1-3">
+        <h1>Side Content</h1>
+    </div>
+</div>
 ```
 
 
