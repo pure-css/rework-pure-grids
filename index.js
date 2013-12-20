@@ -186,7 +186,7 @@ function generateWidthRule(width, selectors, options) {
         }]
     };
 
-    // Adds an additonal `*width` declaration for IE < 8 if the width is < 100%
+    // Adds an additional `*width` declaration for IE < 8 if the width is < 100%
     // and the `includeOldIEWidths` option is truthy.
     if (options.includeOldIEWidths && width < 1) {
         // Updates the width value for the `*width` property to ensure IE < 8's
