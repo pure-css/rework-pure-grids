@@ -23,31 +23,26 @@ Create a customized set units for Pure Grids:
 var rework    = require('rework'),
     pureGrids = require('rework-pure-grids');
 
-var css = rework('')
-        .use(pureGrids.units(12))
-        .use(pureGrids.mediaQueries(12, {
-            med  : 'screen and (min-width: 24em)',
-            lrg  : 'screen and (min-width: 48em)',
-            xlrg : 'screen and (min-width: 60em)'
-        }))
-        .toString();
+var css = rework('').use(pureGrids.units(12, {
+    mediaQueries: {
+        sm  : 'screen and (min-width: 30em)',
+        med : 'screen and (min-width: 48em)',
+        lrg : 'screen and (min-width: 64em)',
+        xlrg: 'screen and (min-width: 75em)'
+    }
+})).toString();
 ```
 
-Now use the new selectors in HTML whenever you want an element's width to change at a certain media query.
+The new classnames can be added to HTML elements whenever their width shoudl
+change at the break-points specified in the `mediaQueries` option above.
 
 ```html
 <div class="pure-g">
-    <!-- This content will have the following widths:
-        100% on phones, 50% at 24em, 25% at 48em, and 12.5% at 60em and up
-    -->
-    <div id="main" class="pure-u-1 pure-u-med-1-2 pure-u-lrg-1-4 pure-u-xlrg-1-8">
+    <div id="main" class="pure-u-1 pure-u-med-3-4 pure-u-xlrg-2-3">
         <h1>Main Content</h1>
     </div>
 
-    <!-- This content will have the following widths:
-        100% on phones, 25% at 24em and up.
-    -->
-    <div id="side" class="pure-u-1 pure-u-med-1-4">
+    <div id="side" class="pure-u-1 pure-u-med-1-4 pure-u-xlrg-1-3">
         <h1>Side Content</h1>
     </div>
 </div>
