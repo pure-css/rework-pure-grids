@@ -83,9 +83,12 @@ function pureGridsUnits(units, options) {
         // Media queries wrappers for custom Pure Grids unit size rules.
         if (mediaQueries) {
             Object.keys(mediaQueries).forEach(function (name) {
-                // Appends the media query's `name` to the selector prefix.
+                // Adjusts `options` to omit generating old IE `*width`s inside
+                // the media queries, and append the media query's `name` to the
+                // `selectorPrefix`.
                 var mediaRules = generateUnitRules(units, extend({}, options, {
-                    selectorPrefix: options.selectorPrefix + name + '-'
+                    includeOldIEWidths: false,
+                    selectorPrefix    : options.selectorPrefix + name + '-'
                 }));
 
                 style.rules.push({
