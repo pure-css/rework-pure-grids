@@ -14,6 +14,10 @@ exports.units = pureGridsUnits;
 // grid units from wrapping to the next line.
 var OLD_IE_WIDTH_DELTA = -0.00031;
 
+// Pure's default grid unit sizes which are used when no unit sizes are
+// provided.
+var PURE_GRID_UNIT_SIZES = [5, 24];
+
 // AST of declarations of Pure's `.pure-u` styles that get applied to all of the
 // generated grid units.
 var PURE_GRID_UNIT_DECLARATIONS  = [
@@ -61,7 +65,13 @@ var PURE_GRID_UNIT_DECLARATIONS  = [
 ];
 
 function pureGridsUnits(units, options) {
-    Array.isArray(units) || (units = [units]);
+    // Check for specificed `units` Number or Number[].
+    if (typeof units === 'number') {
+        units = [units];
+    } else if (!Array.isArray(units)) {
+        options = units;
+        units   = null;
+    }
 
     // Apply defaults to any non-specified `options`.
     options = extend({
@@ -77,11 +87,16 @@ function pureGridsUnits(units, options) {
     var mediaQueries = options.mediaQueries;
 
     return function (style) {
-        // Custom Pure Grids unit size rules.
-        style.rules = style.rules.concat(generateUnitRules(units, options));
+        // Custom Pure Grids unit size rules, if `units` were specified.
+        if (units) {
+            style.rules = style.rules.concat(generateUnitRules(units, options));
+        }
 
-        // Media queries wrappers for custom Pure Grids unit size rules.
+        // Media queries wrappers for either custom or default Pure Grids unit
+        // size rules.
         if (mediaQueries) {
+            units || (units = PURE_GRID_UNIT_SIZES);
+
             Object.keys(mediaQueries).forEach(function (name) {
                 // Adjusts `options` to omit generating old IE `*width`s inside
                 // the media queries, and append the media query's `name` to the
@@ -127,11 +142,13 @@ function generateUnitRules(units, options) {
 
     // Prepends rule that applies the `.pure-u` declarations to all of the grid
     // unit selectors that were created in the process above.
-    rules.unshift({
-        type        : 'rule',
-        selectors   : Object.keys(selectors).sort(compareSelectors),
-        declarations: PURE_GRID_UNIT_DECLARATIONS
-    });
+    if (rules.length) {
+        rules.unshift({
+            type        : 'rule',
+            selectors   : Object.keys(selectors).sort(compareSelectors),
+            declarations: PURE_GRID_UNIT_DECLARATIONS
+        });
+    }
 
     return rules;
 }
@@ -141,7 +158,7 @@ function generateUnitSelectors(widths, numUnits, options) {
         prefix    = options.selectorPrefix,
         selector, selectors, width, reduced;
 
-    while (numerator <= numUnits) {
+    while (numUnits > 0 && numerator <= numUnits) {
         width     = numerator / numUnits;
         selectors = widths[width] || (widths[width] = {});
 
