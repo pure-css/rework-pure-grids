@@ -1,6 +1,16 @@
 Rework Pure Grids Change History
 ================================
 
+0.3.1 (2014-01-09)
+------------------
+
+* Fixed bug to support the valid call signature:
+
+        pureGrids.units(null, { ... });
+
+  This allows the `units` argument to be specified as a falsy value.
+
+
 0.3.0 (2014-01-02)
 ------------------
 
