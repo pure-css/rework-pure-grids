@@ -1,6 +1,18 @@
 Rework Pure Grids Change History
 ================================
 
+0.3.2 (2014-01-09)
+------------------
+
+* Reverted the change `v0.3.0` which Forced `includeOldIEWidths` option to
+  `false` when generating the grid units rules inside of `@media { ... }`
+  blocks.
+
+  The decision was made to revert this previous change because when using other
+  tools like `grunt-stripmq`, the `*width` declarations need to be present. Also
+  keeping these declaration should add minimal file size overhead with gzip.
+
+
 0.3.1 (2014-01-09)
 ------------------
 
