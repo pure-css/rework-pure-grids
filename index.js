@@ -4,11 +4,26 @@ Copyrights licensed under the New BSD License.
 See the accompanying LICENSE file for terms.
 */
 
-'use strict';
+(function (root, factory) {
 
-exports.units = pureGridsUnits;
+    'use strict';
+
+    // UMD
+    if (typeof define === 'function' && define.amd) {
+        define(factory);
+    } else if (typeof exports === 'object') {
+        module.exports = factory();
+    } else if (typeof YUI !== 'undefined' && YUI.add) {
+        YUI.add('rework-pure-grids', factory, '0.3.2', {es: true});
+    } else {
+        root.pureGrids = factory();
+    }
+
+})(typeof global !== 'undefined' ? global : this, function () {
 
 // -----------------------------------------------------------------------------
+
+'use strict';
 
 // IE < 8 has issues with rounding, reducing the width slightly prevents the
 // grid units from wrapping to the next line.
@@ -282,3 +297,11 @@ function toPercentage(num, decimals) {
     num *= 100;
     return num.toFixed(num % 1 === 0 ? 0 : decimals) + '%';
 }
+
+// -- Exports ------------------------------------------------------------------
+
+return {
+    units: pureGridsUnits
+};
+
+});
