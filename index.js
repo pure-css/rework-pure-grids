@@ -65,10 +65,11 @@ var PURE_GRID_UNIT_DECLARATIONS  = [
 ];
 
 function pureGridsUnits(units, options) {
-    // Check for specificed `units` Number or Number[].
+    // Check for specificed `units` Number or Number[], if it's neither, assume
+    // this was called with one argument and `units` is really `options`.
     if (typeof units === 'number') {
         units = [units];
-    } else if (!Array.isArray(units)) {
+    } else if (units && !Array.isArray(units)) {
         options = units;
         units   = null;
     }
