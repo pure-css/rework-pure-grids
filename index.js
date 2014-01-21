@@ -5,7 +5,6 @@ See the accompanying LICENSE file for terms.
 */
 
 (function (root, factory) {
-
     'use strict';
 
     // UMD
