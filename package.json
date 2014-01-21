@@ -22,6 +22,6 @@
     "url": "https://github.com/ericf/rework-pure-grids/issues"
   },
   "peerDependencies": {
-    "rework": "~0.18.3"
+    "rework": ">=0.18.0"
   }
 }
