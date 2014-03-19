@@ -50,7 +50,7 @@ var css = rework('').use(pureGrids.units(12, {
 })).toString();
 ```
 
-The new classnames can be added to HTML elements whenever their width shoudl
+The new classnames can be added to HTML elements whenever their width should
 change at the break-points specified in the `mediaQueries` option above.
 
 ```html
