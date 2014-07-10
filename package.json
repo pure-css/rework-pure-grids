@@ -8,7 +8,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/ericf/rework-pure-grids.git"
+    "url": "git://github.com/yahoo/rework-pure-grids.git"
   },
   "keywords": [
     "pure",
@@ -19,7 +19,7 @@
   "author": "Eric Ferraiuolo <eferraiuolo@gmail.com>",
   "license": "BSD",
   "bugs": {
-    "url": "https://github.com/ericf/rework-pure-grids/issues"
+    "url": "https://github.com/yahoo/rework-pure-grids/issues"
   },
   "peerDependencies": {
     "rework": "^1.0.0"
