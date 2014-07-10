@@ -1,6 +1,14 @@
 Rework Pure Grids Change History
 ================================
 
+1.0.0 (2014-07-10)
+------------------
+
+* __[!]__ Stable.
+
+* Move repo to Yahoo org on GitHub.
+
+
 0.3.2 (2014-01-09)
 ------------------
 
