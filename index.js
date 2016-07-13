@@ -27,13 +27,6 @@ var PURE_GRID_UNIT_DECLARATIONS  = [
         value   : 'inline-block'
     },
 
-
-    {
-        type    : 'declaration',
-        property: 'zoom',
-        value   : '1'
-    },
-
     {
         type    : 'declaration',
         property: 'letter-spacing',
