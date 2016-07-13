@@ -10,10 +10,6 @@ exports.units = pureGridsUnits;
 
 // -----------------------------------------------------------------------------
 
-// IE < 8 has issues with rounding, reducing the width slightly prevents the
-// grid units from wrapping to the next line.
-var OLD_IE_WIDTH_DELTA = -0.00031;
-
 // Pure's default grid unit sizes which are used when no unit sizes are
 // provided.
 var PURE_GRID_UNIT_SIZES = [5, 24];
@@ -44,12 +40,6 @@ var PURE_GRID_UNIT_DECLARATIONS  = [
         property: 'vertical-align',
         value   : 'top'
     },
-
-    {
-        type    : 'declaration',
-        property: 'text-rendering',
-        value   : 'auto'
-    }
 ];
 
 function pureGridsUnits(units, options) {
@@ -66,7 +56,6 @@ function pureGridsUnits(units, options) {
     options = extend({
         decimals: 4,
 
-        includeOldIEWidths     : true,
         includeReducedFractions: true,
         includeWholeNumbers    : true,
 
