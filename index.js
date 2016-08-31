@@ -104,6 +104,19 @@ function pureGridsUnits(units, options) {
                     selectorPrefix: options.selectorPrefix + name + '-'
                 }));
 
+                // Add a rule which hides the element
+                mediaRules.push({
+                    type: 'rule',
+                    selectors: [
+                        options.selectorPrefix + name + '-0'
+                    ],
+                    declarations: [{
+                        type: 'declaration',
+                        property: 'display',
+                        value: 'none'
+                    }]
+                })
+
                 style.rules.push({
                     type : 'media',
                     media: mediaQueries[name],
