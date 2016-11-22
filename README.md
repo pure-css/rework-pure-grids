@@ -25,10 +25,10 @@ var rework    = require('rework'),
 
 var css = rework('').use(pureGrids.units({
     mediaQueries: {
-        sm  : 'screen and (min-width: 30em)',
-        med : 'screen and (min-width: 48em)',
-        lrg : 'screen and (min-width: 64em)',
-        xlrg: 'screen and (min-width: 75em)'
+        sm : 'screen and (min-width: 35.5em)',
+        md : 'screen and (min-width: 48em)',
+        lg : 'screen and (min-width: 64em)',
+        xl : 'screen and (min-width: 80em)'
     }
 })).toString();
 ```
@@ -42,10 +42,10 @@ var rework    = require('rework'),
 // Creates a 12ths-based Grid.
 var css = rework('').use(pureGrids.units(12, {
     mediaQueries: {
-        sm  : 'screen and (min-width: 30em)',
-        med : 'screen and (min-width: 48em)',
-        lrg : 'screen and (min-width: 64em)',
-        xlrg: 'screen and (min-width: 75em)'
+        sm : 'screen and (min-width: 35.5em)',
+        md : 'screen and (min-width: 48em)',
+        lg : 'screen and (min-width: 64em)',
+        xl : 'screen and (min-width: 80em)'
     }
 })).toString();
 ```
