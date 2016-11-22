@@ -10,10 +10,6 @@ exports.units = pureGridsUnits;
 
 // -----------------------------------------------------------------------------
 
-// IE < 8 has issues with rounding, reducing the width slightly prevents the
-// grid units from wrapping to the next line.
-var OLD_IE_WIDTH_DELTA = -0.00031;
-
 // Pure's default grid unit sizes which are used when no unit sizes are
 // provided.
 var PURE_GRID_UNIT_SIZES = [5, 24];
@@ -25,18 +21,6 @@ var PURE_GRID_UNIT_DECLARATIONS  = [
         type    : 'declaration',
         property: 'display',
         value   : 'inline-block'
-    },
-
-    {
-        type    : 'declaration',
-        property: '*display',
-        value   : 'inline'
-    },
-
-    {
-        type    : 'declaration',
-        property: 'zoom',
-        value   : '1'
     },
 
     {
@@ -56,12 +40,6 @@ var PURE_GRID_UNIT_DECLARATIONS  = [
         property: 'vertical-align',
         value   : 'top'
     },
-
-    {
-        type    : 'declaration',
-        property: 'text-rendering',
-        value   : 'auto'
-    }
 ];
 
 function pureGridsUnits(units, options) {
@@ -78,7 +56,6 @@ function pureGridsUnits(units, options) {
     options = extend({
         decimals: 4,
 
-        includeOldIEWidths     : true,
         includeReducedFractions: true,
         includeWholeNumbers    : true,
 
@@ -152,7 +129,7 @@ function generateUnitRules(units, options) {
 }
 
 function generateUnitSelectors(widths, numUnits, options) {
-    var numerator = 1,
+    var numerator = 0,
         prefix    = options.selectorPrefix,
         selector, selectors, width, reduced;
 
@@ -171,14 +148,14 @@ function generateUnitSelectors(widths, numUnits, options) {
 
             // Makes sure the faction has been reduced before adding another
             // selector for the current grid unit.
-            if (reduced[0] !== numerator && reduced[1] !== numUnits) {
+            if ((reduced[0] !== numerator && reduced[1] !== numUnits) || width === 0) {
                 // Create and store the selectors, in de-dupped format.
                 selector = getSelector(prefix, reduced[0], reduced[1]);
                 selectors[selector] = true;
 
                 // Adds an additional, denominator-less selector for fractions
                 // whose denominator is `1`.
-                if (options.includeWholeNumbers && reduced[1] === 1) {
+                if ((options.includeWholeNumbers && reduced[1] === 1) || width === 0) {
                     selector = getSelector(prefix, reduced[0]);
                     selectors[selector] = true;
                 }
@@ -203,20 +180,15 @@ function generateWidthRule(width, selectors, options) {
             value   : toPercentage(width, options.decimals)
         }]
     };
-
-    // Adds an additional `*width` declaration for IE < 8 if the width is < 100%
-    // and the `includeOldIEWidths` option is truthy.
-    if (options.includeOldIEWidths && width < 1) {
-        // Updates the width value for the `*width` property to ensure IE < 8's
-        // rounding issues don't break the grid.
-        width += OLD_IE_WIDTH_DELTA;
-
-        rule.declarations.push({
-            type    : 'declaration',
-            property: '*width',
-            value   : toPercentage(width, options.decimals)
-        });
-    }
+	
+	if (width === 0) {
+		rule.declarations.push({
+			type	: 'declaration',
+			property: 'display',
+			value	: 'none'
+		});
+	}
+	
 
     return rule;
 }
