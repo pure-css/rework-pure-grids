@@ -1,6 +1,8 @@
 Rework Pure Grids
 =================
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/yahoo/rework-pure-grids.svg)](https://greenkeeper.io/)
+
 Generate custom units for [Pure][] Grids via [Rework][].
 
 
