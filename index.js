@@ -66,7 +66,7 @@ function pureGridsUnits(units, options) {
     options = extend({
         decimals: 4,
 
-        includeOldIEWidths     : true,
+        includeOldIEWidths     : false,
         includeReducedFractions: true,
         includeWholeNumbers    : true,
 
