@@ -1,6 +1,12 @@
 Rework Pure Grids Change History
 ================================
 
+2.0.0 (2020-05-02)
+------------------
+
+* Remove IE 8 specific properties
+
+
 1.0.0 (2014-07-10)
 ------------------
 
