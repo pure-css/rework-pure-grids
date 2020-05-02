@@ -29,18 +29,6 @@ var PURE_GRID_UNIT_DECLARATIONS  = [
 
     {
         type    : 'declaration',
-        property: '*display',
-        value   : 'inline'
-    },
-
-    {
-        type    : 'declaration',
-        property: 'zoom',
-        value   : '1'
-    },
-
-    {
-        type    : 'declaration',
         property: 'letter-spacing',
         value   : 'normal'
     },
