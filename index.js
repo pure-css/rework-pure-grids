@@ -140,7 +140,7 @@ function generateUnitRules(units, options) {
 }
 
 function generateUnitSelectors(widths, numUnits, options) {
-    var numerator = 1,
+    var numerator = 0,
         prefix    = options.selectorPrefix,
         selector, selectors, width, reduced;
 
@@ -159,14 +159,14 @@ function generateUnitSelectors(widths, numUnits, options) {
 
             // Makes sure the faction has been reduced before adding another
             // selector for the current grid unit.
-            if (reduced[0] !== numerator && reduced[1] !== numUnits) {
+            if ((reduced[0] !== numerator && reduced[1] !== numUnits) || width === 0) {
                 // Create and store the selectors, in de-dupped format.
                 selector = getSelector(prefix, reduced[0], reduced[1]);
                 selectors[selector] = true;
 
                 // Adds an additional, denominator-less selector for fractions
                 // whose denominator is `1`.
-                if (options.includeWholeNumbers && reduced[1] === 1) {
+                if ((options.includeWholeNumbers && reduced[1] === 1) || width === 0) {
                     selector = getSelector(prefix, reduced[0]);
                     selectors[selector] = true;
                 }
@@ -191,7 +191,15 @@ function generateWidthRule(width, selectors, options) {
             value   : toPercentage(width, options.decimals)
         }]
     };
-
+	
+	if (width === 0) {
+		rule.declarations.push({
+			type	: 'declaration',
+			property: 'display',
+			value	: 'none'
+		});
+	}
+	
     // Adds an additional `*width` declaration for IE < 8 if the width is < 100%
     // and the `includeOldIEWidths` option is truthy.
     if (options.includeOldIEWidths && width < 1) {
